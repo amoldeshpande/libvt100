@@ -1,1 +1,9 @@
 *~
+.vs/
+Backup/
+build/
+UpgradeLog.htm
+*.user
+CppUnitTest/Debug/
+Debug/
+packages/

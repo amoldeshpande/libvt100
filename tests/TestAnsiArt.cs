@@ -11,6 +11,11 @@ namespace libVT100.Tests
     [TestFixture]
     public class TestAnsiArt
     {
+        //https://github.com/Microsoft/vstest/issues/504
+        String fixPathForNUnitV3(String filename)
+        {
+            return Path.Combine(TestContext.CurrentContext.TestDirectory, filename);
+        }
         [Test]
         public void TestWendy ()
         {
@@ -22,7 +27,7 @@ namespace libVT100.Tests
         [Test]
         public void TestSimpleTxt ()
         {
-            System.Console.Write ( ReadAndRenderFile ( "../tests/simple.txt", Encoding.UTF8, new Size(50, 6) ).ToString() );
+            System.Console.Write ( ReadAndRenderFile ( "../tests/simple2.txt", Encoding.UTF8, new Size(50, 6) ).ToString() );
         }
         
         [Test]
@@ -47,8 +52,7 @@ namespace libVT100.Tests
             vt100.Encoding = _encoding;
             Screen screen = new Screen ( _size.Width, _size.Height );
             vt100.Subscribe ( screen );
-           
-            using ( Stream stream = File.Open( _filename, FileMode.Open ) )
+            using ( Stream stream = File.Open(fixPathForNUnitV3( _filename), FileMode.Open,FileAccess.Read,FileShare.Read ) )
             {
                 try
                 {
@@ -64,7 +68,7 @@ namespace libVT100.Tests
             }
             //System.Console.Write ( screen.ToString() );
             Bitmap bitmap = screen.ToBitmap ( new Font("Courier New", 6) );
-            bitmap.Save ( "..\\build\\" + Path.GetFileNameWithoutExtension(_filename) + "_" + _encoding.EncodingName + ".png", System.Drawing.Imaging.ImageFormat.Png );
+            bitmap.Save ( fixPathForNUnitV3("..\\build\\" + Path.GetFileNameWithoutExtension(_filename) + "_" + _encoding.EncodingName + ".png"), System.Drawing.Imaging.ImageFormat.Png );
 
             /*
               foreach ( Screen.Character ch in screen )

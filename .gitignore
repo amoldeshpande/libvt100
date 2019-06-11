@@ -7,3 +7,8 @@ UpgradeLog.htm
 CppUnitTest/Debug/
 Debug/
 packages/
+CppUnitTest/x64/
+libvt100cpp/x64/
+vt100render/obj/Release/vt100render.csproj.CoreCompileInputs.cache
+vt100render/obj/
+x64/

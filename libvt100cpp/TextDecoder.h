@@ -12,6 +12,7 @@ namespace libVT100
 		~TextDecoder();
 		TextDecoder() = delete;
 		int GetChars(const char* bytes,  int count, std::vector<WCHAR>& chars);
+		int GetChar(const char byte,   WCHAR& outChar);
 		std::vector<byte> GetBytes(WCHAR* chars,int count);
 	};
 

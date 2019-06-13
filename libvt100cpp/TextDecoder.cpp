@@ -53,6 +53,20 @@ namespace libVT100
 		delete origPtr;
 		return i;
 	}
+	int TextDecoder::GetChar(const char inStr, WCHAR& outChar)
+	{
+		UErrorCode err = U_ZERO_ERROR;
+		WCHAR out;
+		const char* src = &inStr;
+		WCHAR* target = &out;
+		ucnv_toUnicode(m_converter, (UChar**)&target, (UChar*)target + 1, &src, src + 1, nullptr, FALSE, &err);
+		if(target > &out)
+		{
+			outChar = out;
+			return 1;
+		}
+		return 0;
+	}
 	std::vector<byte> TextDecoder::GetBytes(WCHAR* chars, int count)
 	{
 		UErrorCode err = U_ZERO_ERROR;

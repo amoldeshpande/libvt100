@@ -200,16 +200,15 @@ namespace libVT100
 						return;
 					}
 				}
-				std::vector<byte> data({ _data });
-				std::vector<WCHAR> str;
-				int count = Encoding->GetChars((const char*)&data[0], 1, str);
+				WCHAR str;
+				int count = Encoding->GetChar(_data, str);
 				if (count != 1)
 				{
 					dprintf("Decoding failed for ProcessNormalInput %d instead of 1\n", count);
 				}
-				if (str.size() > 0)
+				if (count > 0)
 				{
-					OnCharacters(str);
+					OnCharacter(str);
 				}
 				else
 				{
@@ -297,6 +296,7 @@ namespace libVT100
 
 			protected:
 				virtual void OnCharacters(std::vector<WCHAR>& _characters) = 0;
+				virtual void OnCharacter(WCHAR _character) = 0;
 				virtual void ProcessCommand(byte _command, String& _parameter) = 0;
 
 			protected:

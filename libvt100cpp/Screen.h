@@ -356,22 +356,26 @@ namespace libVT100
         {
             for( auto ch : _chars )
             {
-                if ( ch == '\n' )
-                {
-                    MoveCursorToBeginningOfLineBelow ( _sender, 1 );
-                }
-                else if ( ch == '\r' )
-                {
-                    //(this as IVT100DecoderClient).MoveCursorToBeginningOfLineBelow ( _sender, 1 );
-                }
-                else
-                {
-                    m_screen[CursorPosition().x][CursorPosition().y].Char =  ch;
-                    m_screen[CursorPosition().x][CursorPosition().y].GraphicAttributes = m_currentAttributes;
-                    CursorForward ();
-                }
+				OneCharacter(_sender, ch);
             }
         }
+        virtual void OneCharacter( AnsiDecoder& _sender, WCHAR ch) override
+		{
+			if (ch == '\n')
+			{
+				MoveCursorToBeginningOfLineBelow(_sender, 1);
+			}
+			else if (ch == '\r')
+			{
+				//(this as IVT100DecoderClient).MoveCursorToBeginningOfLineBelow ( _sender, 1 );
+			}
+			else
+			{
+				m_screen[CursorPosition().x][CursorPosition().y].Char = ch;
+				m_screen[CursorPosition().x][CursorPosition().y].GraphicAttributes = m_currentAttributes;
+				CursorForward();
+			}
+		}
         
         virtual void SaveCursor ( AnsiDecoder& _sender ) override
         {

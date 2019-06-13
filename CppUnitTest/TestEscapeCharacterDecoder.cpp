@@ -119,6 +119,10 @@ namespace CppUnitTest
         {
             m_chars.push_back ( _chars );
         }
+        virtual void OnCharacter ( WCHAR _char ) override
+        {
+			m_chars.push_back({ _char });
+        }
 
        virtual void OnOutput( std::vector<byte>& _data ) override
        {

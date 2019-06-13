@@ -361,6 +361,10 @@ namespace CppUnitTest
         {
             m_chars.push_back ( _chars );
         }
+        virtual void OneCharacter ( AnsiDecoder& _sender, WCHAR _chars ) override
+        {
+			m_chars.push_back({ _chars });
+        }
         
         virtual void SaveCursor ( AnsiDecoder& _sender ) override
         {

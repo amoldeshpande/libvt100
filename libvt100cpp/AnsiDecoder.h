@@ -426,6 +426,13 @@ namespace libVT100
 			   client->Characters(*this, _characters);
 		   }
 	   }
+	   virtual void OnCharacter(WCHAR _character) override
+	   {
+		   for (auto client : m_listeners)
+		   {
+			   client->OneCharacter(*this, _character);
+		   }
+	   }
 
    private:
 

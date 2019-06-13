@@ -128,6 +128,7 @@ namespace libVT100
 	{
 	public:
 		virtual void Characters(AnsiDecoder& _sender, std::vector<WCHAR>& _chars) = 0;
+		virtual void OneCharacter(AnsiDecoder& _sender, WCHAR _chars) = 0;
 		virtual void SaveCursor(AnsiDecoder& _sender) = 0;
 		virtual void RestoreCursor(AnsiDecoder& _sender) = 0;
 		virtual SIZE GetSize(AnsiDecoder& _sender) = 0;

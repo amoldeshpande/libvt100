@@ -180,6 +180,7 @@
     <ClCompile Include="TestEscapeCharacterDecoder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\libvt100cpp\Screen.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

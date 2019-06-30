@@ -3,16 +3,17 @@
 
 namespace libVT100
 {
-   enum class DeviceStatus
-   {
-      Unknown = -1,
-      Ok = 0,
-      Failure = 3,
-   }
+	enum class DeviceStatus
+	{
+		Unknown = -1,
+		Ok = 0,
+		Failure = 3,
+	};
    class VT100Decoder;
    
    class IVT100DecoderClient : public IAnsiDecoderClient
    {
+   public:
 	   std::string GetDeviceCode(VT100Decoder& _decoder);
 	   DeviceStatus GetDeviceStatus(VT100Decoder& _decoder);
 	   /// <summary>Resize the terminal window to _size (given in characters).</summary>
@@ -23,14 +24,12 @@ namespace libVT100
    class VT100Decoder : public AnsiDecoder
    {
    protected :
-	   std::vector<IVT100DecoderClient> m_vt100Listeners;
+	   std::vector<IVT100DecoderClient*> m_vt100Listeners;
 
    public:
       VT100Decoder() : AnsiDecoder()
       {
       }
-	virtual void Subscribe ( IVT100DecoderClient _client ) = 0;
-	virtual void UnSubscribe ( IVT100DecoderClient _client ) = 0;
 
    protected :
 	   virtual bool IsValidParameterCharacter(char _c) override
@@ -38,7 +37,7 @@ namespace libVT100
 		   return _c == '=' || _c == ' ' || AnsiDecoder::IsValidParameterCharacter(_c);
 	   }
 
-	   void ProcessCommand(byte _command, std::string& _parameter) override
+	   void ProcessCommand(byte _command, String& _parameter) override
 	   {
          switch ( (char) _command )
          {
@@ -49,19 +48,18 @@ namespace libVT100
                break;
 
             case 'n':
-               if ( _parameter == "5" )
+               if ( _parameter == L"5" )
                {
                   DeviceStatus status = OnGetDeviceStatus();
-                  string stringStatus = ((int) status).ToString();
-                  byte[] output = new byte[2 + stringStatus.Length + 1];
-                  int i = 0;
-                  output[i++] = EscapeCharacter;
-                  output[i++] = LeftBracketCharacter;
-                  foreach ( char c in stringStatus )
+				  std::string stringStatus = std::to_string((int)status);
+				  std::vector<byte> output;
+                  output.push_back(EscapeCharacter);
+                  output.push_back(LeftBracketCharacter);
+                  for ( auto c : stringStatus )
                   {
-                     output[i++] = (byte) c;
+                     output.push_back((byte) c);
                   }
-                  output[i++] = (byte) 'n';
+                  output.push_back( (byte) 'n');
                   OnOutput( output );
                }
                else
@@ -78,7 +76,7 @@ namespace libVT100
             // Set alternative font
 
             case 'r':
-               if ( _parameter == "" )
+               if ( _parameter == L"" )
                {
                   // Set scroll region to entire screen
                }
@@ -89,31 +87,43 @@ namespace libVT100
                break;
 
             case 't':
-               string[] parameters = _parameter.Split( ';' );
-               switch ( parameters[0] )
-               {
-                  case "3":
-                     if ( parameters.Length >= 3 )
-                     {
-                        int left, top;
-                        if ( Int32.TryParse( parameters[1], out left ) && Int32.TryParse( parameters[2], out top ) )
-                        {
-                           OnMoveWindow( new Point( left, top ) );
-                        }
-                     }
-                     break;
+			{
+				std::wistringstream commands(_parameter);
+				String parameters;
+				while (std::getline(commands, parameters, L';'))
+				{
+					switch (parameters[0])
+					{
+						case L'3':
+							if (parameters.length() >= 3)
+							{
+								String lefts({ parameters[1] });
+								String tops({ parameters[2] });
+								int left = DecodeInt(lefts,-1);
+								int top = DecodeInt(tops,-1);
+								if ((left != -1) && (top != -1))
+								{
+									OnMoveWindow(Point({ left, top }));
+								}
+							}
+							break;
 
-                  case "8":
-                     if ( parameters.Length >= 3 )
-                     {
-                        int rows, columns;
-                        if ( Int32.TryParse( parameters[1], out rows ) && Int32.TryParse( parameters[2], out columns ) )
-                        {
-                           OnResizeWindow( new Size( columns, rows ) );
-                        }
-                     }
-                     break;
-               }
+						case L'8':
+							if (parameters.length() >= 3)
+							{
+								String rowstr({ parameters[1] });
+								String colstr({ parameters[2] });
+								int rows = DecodeInt(rowstr,-1);
+								int columns = DecodeInt(colstr,-1);
+								if ((rows != -1) && (columns != -1) )
+								{
+									OnResizeWindow(SIZE({ columns, rows }));
+								}
+							}
+							break;
+					}
+				}
+			}
                break;
 
             case '!':
@@ -126,12 +136,12 @@ namespace libVT100
          }
       }
 	protected:
-		virtual string OnGetDeviceCode()
+		virtual std::string OnGetDeviceCode()
       {
          for( auto client : m_vt100Listeners )
          {
-            string deviceCode = client.GetDeviceCode( this );
-            if ( deviceCode != null )
+            std::string deviceCode = client->GetDeviceCode( *this );
+            if ( deviceCode.length() != 0 )
             {
                return deviceCode;
             }
@@ -143,20 +153,20 @@ namespace libVT100
       {
          for( auto client : m_vt100Listeners )
          {
-            DeviceStatus status = client.GetDeviceStatus( this );
-            if ( status != DeviceStatus.Unknown )
+            DeviceStatus status = client->GetDeviceStatus( *this );
+            if ( status != DeviceStatus::Unknown )
             {
                return status;
             }
          }
-         return DeviceStatus.Failure;
+         return DeviceStatus::Failure;
       }
 
-      virtual void OnResizeWindow( Size _size )
+      virtual void OnResizeWindow( SIZE _size )
       {
          for( auto client : m_vt100Listeners )
          {
-            client.ResizeWindow( this, _size );
+            client->ResizeWindow(*this, _size );
          }
       }
 
@@ -164,20 +174,20 @@ namespace libVT100
       {
          for( auto client : m_vt100Listeners )
          {
-            client.MoveWindow( this, _position );
+            client->MoveWindow(*this, _position );
          }
       }
 
-      void IVT100Decoder.Subscribe( IVT100DecoderClient _client )
+      void Subscribe( IVT100DecoderClient* _client )  
       {
-         m_listeners.Add( _client );
-         m_vt100Listeners.Add( _client );
+         m_listeners.push_back( _client );
+         m_vt100Listeners.push_back( _client );
       }
 
-      void IVT100Decoder.UnSubscribe( IVT100DecoderClient _client )
+      void UnSubscribe( IVT100DecoderClient* _client ) 
       {
-         m_vt100Listeners.Remove( _client );
-         m_listeners.Remove( _client );
+         m_vt100Listeners.push_back( _client );
+         m_listeners.push_back( _client );
       }
-   }
+   };
 }

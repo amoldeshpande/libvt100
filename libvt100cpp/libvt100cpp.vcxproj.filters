@@ -33,9 +33,6 @@
     <ClInclude Include="VT100Decoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ForwardDecls.h">
       <Filter>Header Files</Filter>
     </ClInclude>

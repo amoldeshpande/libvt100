@@ -17,7 +17,7 @@ namespace libVT100
    public:
 	   AnsiDecoder() :EscapeCharacterDecoder() {}
 
-   private:
+   protected:
 	   int DecodeInt(String& _value, int _default)
 	   {
 		   if (_value.size() == 0)

@@ -178,7 +178,6 @@
     <ClInclude Include="IAnsiDecoderClient.h" />
     <ClInclude Include="IDecoder.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Screen.h" />
     <ClInclude Include="TextDecoder.h" />
     <ClInclude Include="VT100Decoder.h" />
   </ItemGroup>

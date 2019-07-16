@@ -14,12 +14,12 @@ namespace libVT100
    class IVT100DecoderClient : public IAnsiDecoderClient
    {
    public:
-	   std::string GetDeviceCode(VT100Decoder& _decoder);
-	   DeviceStatus GetDeviceStatus(VT100Decoder& _decoder);
+	   virtual String GetDeviceCode(VT100Decoder& _decoder) = 0;
+	   virtual DeviceStatus GetDeviceStatus(VT100Decoder& _decoder) = 0;
 	   /// <summary>Resize the terminal window to _size (given in characters).</summary>
-	   void ResizeWindow(VT100Decoder& _decoder, SIZE _size);
+	   virtual void ResizeWindow(VT100Decoder& _decoder, SIZE _size) = 0;
 	   /// <summary>Move the terminal window to _size (given in pixels).</summary>
-	   void MoveWindow(VT100Decoder& _decoder, Point _position);
+	   virtual void MoveWindow(VT100Decoder& _decoder, Point _position) = 0;
    };
    class VT100Decoder : public AnsiDecoder
    {
@@ -43,7 +43,7 @@ namespace libVT100
          {
             case 'c':
 			{
-				std::string deviceCode = OnGetDeviceCode();
+				String deviceCode = OnGetDeviceCode();
 			}
                break;
 
@@ -89,39 +89,38 @@ namespace libVT100
             case 't':
 			{
 				std::wistringstream commands(_parameter);
-				String parameters;
-				while (std::getline(commands, parameters, L';'))
+				std::vector<String> parameters;
+				String param;
+				while (std::getline(commands, param, L';'))
 				{
-					switch (parameters[0])
-					{
-						case L'3':
-							if (parameters.length() >= 3)
+					parameters.push_back(param);
+				}
+				wchar_t c = parameters[0][0];
+				switch (c)
+				{
+					case L'3':
+						if (parameters.size() >= 3)
+						{
+							int left = DecodeInt(parameters[1], -1);
+							int top = DecodeInt(parameters[2], -1);
+							if ((left != -1) && (top != -1))
 							{
-								String lefts({ parameters[1] });
-								String tops({ parameters[2] });
-								int left = DecodeInt(lefts,-1);
-								int top = DecodeInt(tops,-1);
-								if ((left != -1) && (top != -1))
-								{
-									OnMoveWindow(Point({ left, top }));
-								}
+								OnMoveWindow(Point({ left, top }));
 							}
-							break;
+						}
+						break;
 
-						case L'8':
-							if (parameters.length() >= 3)
+					case L'8':
+						if (parameters.size() >= 3)
+						{
+							int rows = DecodeInt(parameters[1], -1);
+							int columns = DecodeInt(parameters[2], -1);
+							if ((rows != -1) && (columns != -1))
 							{
-								String rowstr({ parameters[1] });
-								String colstr({ parameters[2] });
-								int rows = DecodeInt(rowstr,-1);
-								int columns = DecodeInt(colstr,-1);
-								if ((rows != -1) && (columns != -1) )
-								{
-									OnResizeWindow(SIZE({ columns, rows }));
-								}
+								OnResizeWindow(SIZE({ columns, rows }));
 							}
-							break;
-					}
+						}
+						break;
 				}
 			}
                break;
@@ -134,19 +133,19 @@ namespace libVT100
                AnsiDecoder::ProcessCommand( _command, _parameter );
                break;
          }
-      }
+	  }
 	protected:
-		virtual std::string OnGetDeviceCode()
+		virtual String OnGetDeviceCode()
       {
          for( auto client : m_vt100Listeners )
          {
-            std::string deviceCode = client->GetDeviceCode( *this );
+            String deviceCode = client->GetDeviceCode( *this );
             if ( deviceCode.length() != 0 )
             {
                return deviceCode;
             }
          }
-         return "UNKNOWN";
+         return String(L"UNKNOWN");
       }
 
       virtual DeviceStatus OnGetDeviceStatus()
@@ -178,6 +177,7 @@ namespace libVT100
          }
       }
 
+  public:
       void Subscribe( IVT100DecoderClient* _client )  
       {
          m_listeners.push_back( _client );

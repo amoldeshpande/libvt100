@@ -22,6 +22,7 @@ namespace libVT100
 		/// to process data after an exception is thrown.
 		/// </summary>
 		virtual void Input(std::vector<byte>& _data) = 0;
+		virtual void Input(byte* _data, int len) = 0;
 
 		DecoderOutputDelegate Output;
 

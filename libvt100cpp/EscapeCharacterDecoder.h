@@ -12,6 +12,7 @@ namespace libVT100
 	public:
 		const byte EscapeCharacter = 0x1B;
 		const byte LeftBracketCharacter = 0x5B;
+		const byte RightBracketCharacter = 0x5D;
 		const byte XonCharacter = 17;
 		const byte XoffCharacter = 19;
 
@@ -44,6 +45,10 @@ namespace libVT100
 			{
 				return (std::isdigit(_c) || _c == ';' || _c == '"' || _c == '?');
 			}
+			virtual bool IsValidControlSequenceCharacter(char _c)
+			{
+				return (_c == LeftBracketCharacter);
+			}
 
 			void AddToCommandBuffer(byte _byte)
 			{
@@ -60,10 +65,15 @@ namespace libVT100
 
 			void AddToCommandBuffer(std::vector<byte>& _bytes)
 			{
+				AddToCommandBuffer(&_bytes[0], (int)_bytes.size());
+			}
+			void AddToCommandBuffer(byte* _bytes, int len)
+			{
 				if (m_supportXonXoff)
 				{
-					for(auto b : _bytes)
+					for(int i =0;i  < len;i++)
 					{
+						byte b = _bytes[i];
 						if (!(b == XonCharacter || b == XoffCharacter))
 						{
 							m_commandBuffer.push_back(b);
@@ -72,7 +82,7 @@ namespace libVT100
 				}
 				else
 				{
-					m_commandBuffer.insert(m_commandBuffer.end(),_bytes.begin(),_bytes.end());
+					m_commandBuffer.insert(m_commandBuffer.end(),_bytes,_bytes + len);
 				}
 			}
 
@@ -94,7 +104,7 @@ namespace libVT100
 
 					int start = 1;
 					// Is this a one or two byte escape code?
-					if (m_commandBuffer[start] == LeftBracketCharacter)
+					if (IsValidControlSequenceCharacter(m_commandBuffer[start]) )
 					{
 						start++;
 
@@ -149,7 +159,12 @@ namespace libVT100
 					{
 						ProcessCommand(command, parameter);
 					}
-					catch(std::exception& ){}
+					catch(std::exception& ){
+						if(command == EscapeCharacter) //xterm could be ESC[ESC] <OSC>
+						{ 
+							end--;
+						}
+					}
 					//finally
 					{
 						//System.Console.WriteLine ( "Remove the processed commands" );
@@ -219,16 +234,21 @@ namespace libVT100
 
 			virtual void Input(std::vector<byte>& _data) override
 			{
+				Input(&_data[0], (int)_data.size());
 
-				if (_data.size() == 0)
+			}
+			virtual void Input(byte* pData, int len) override
+			{
+				if (len == 0)
 				{
 					throw std::exception("Input can not process an empty array.");
 				}
 
 				if (m_supportXonXoff)
 				{
-					for(auto b : _data)
+					for(int i =0 ;i < len;i++)
 					{
+						byte b = pData[i];
 						if (b == XoffCharacter)
 						{
 							m_xOffReceived = true;
@@ -250,24 +270,24 @@ namespace libVT100
 				switch (m_state)
 				{
 				case State::Normal:
-					if (_data[0] == EscapeCharacter)
+					if (pData[0] == EscapeCharacter)
 					{
-						AddToCommandBuffer(_data);
+						AddToCommandBuffer(pData,len);
 						ProcessCommandBuffer();
 					}
 					else
 					{
 						size_t i = 0;
-						while (i < _data.size() && _data[i] != EscapeCharacter)
+						while (i < len && pData[i] != EscapeCharacter)
 						{
-							ProcessNormalInput(_data[i]);
+							ProcessNormalInput(pData[i]);
 							i++;
 						}
-						if (i != _data.size())
+						if (i != len)
 						{
-							while (i < _data.size())
+							while (i < len)
 							{
-								AddToCommandBuffer(_data[i]);
+								AddToCommandBuffer(pData[i]);
 								i++;
 							}
 							ProcessCommandBuffer();
@@ -276,7 +296,7 @@ namespace libVT100
 					break;
 
 				case State::Command:
-					AddToCommandBuffer(_data);
+					AddToCommandBuffer(pData,len);
 					ProcessCommandBuffer();
 					break;
 				}

@@ -42,6 +42,10 @@ namespace libVT100
 	   {
 		   EscapeCharacterDecoder::Input(_data);
 	   }
+	   virtual void Input(byte*  _data,int len) override
+	   {
+		   EscapeCharacterDecoder::Input(_data,len);
+	   }
 	   virtual void CharacterTyped(WCHAR _character) override
 	   {
 		   EscapeCharacterDecoder::CharacterTyped(_character);
@@ -117,6 +121,10 @@ namespace libVT100
 			   std::wistringstream commands(_parameter);
 			   String s;
 			   std::vector<GraphicRendition> renditionCommands;
+			   if (s.length() == 0)
+			   {
+				   renditionCommands.push_back(GraphicRendition::Reset);
+			   }
 			   while (std::getline(commands, s, L';'))
 			   {
 				   renditionCommands.push_back((GraphicRendition)DecodeInt(s, 0));

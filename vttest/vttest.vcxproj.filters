@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="msvc">
+      <UniqueIdentifier>{05093f80-1ae1-456e-a003-2ba640a4af01}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="vttest-20190105\charsets.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\color.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\draw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\esc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\mouse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\nonvt100.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\printer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\reports.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\reset.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\setup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\sixel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\status.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\tek4014.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\utf8.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\vt52.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\vt220.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\vt320.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\vt420.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\vt520.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\xterm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\ttymodes.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msvc\termios.c">
+      <Filter>msvc</Filter>
+    </ClCompile>
+    <ClCompile Include="vttest-20190105\unix_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="vttest-20190105\draw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vttest-20190105\esc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vttest-20190105\patchlev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vttest-20190105\ttymodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vttest-20190105\vttest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vttest-20190105\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wincompat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msvc\termios.h">
+      <Filter>msvc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

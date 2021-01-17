@@ -167,7 +167,7 @@ inputline(char *s)
   do {
     int ch;
     char *d = s;
-    while ((ch = getchar()) != EOF && ch != '\n') {
+    while ((ch = getchar()) != EOF && ch != '\n' && ch != '\r') {
       if ((d - s) < BUFSIZ - 2)
         *d++ = (char) ch;
     }

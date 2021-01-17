@@ -66,6 +66,13 @@ void win_init()
 	DWORD consoleMode =0;
 	HANDLE hConsole = { GetStdHandle(STD_OUTPUT_HANDLE) };
 	GetConsoleMode(hConsole, &consoleMode);
-//	SetConsoleMode(hConsole, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+//	SetConsoleMode(hConsole, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING | 0x0020 /*ENABLE_PASSTHROUGH_MODE*/);
+	hConsole =  GetStdHandle(STD_INPUT_HANDLE) ;
+	GetConsoleMode(hConsole, &consoleMode);
+	SetConsoleMode(hConsole, consoleMode | ENABLE_VIRTUAL_TERMINAL_INPUT);
+
+	SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);
+	SetFileApisToANSI();
 	_setmode(_fileno(stdin), _O_BINARY);
 }
